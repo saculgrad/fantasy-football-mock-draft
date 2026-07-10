@@ -27,18 +27,23 @@ const POSITION_WEIGHTS: Record<Position, number> = {
 const BYE_PENALTY_UNIT = 2;
 const INJURY_PENALTY_UNIT = 1.5;
 
+// Percentile is uniformly distributed across teams by construction (it's a
+// rank), unlike a school percentage score - so thresholds copied from an
+// academic scale (90+=A, <60=F) would fail half the league. These 12 bands
+// split the 0-100 range evenly instead, so an average (50th percentile) team
+// lands mid-scale (B-) rather than at the bottom.
 const GRADE_THRESHOLDS: Array<[number, string]> = [
-  [97, 'A+'],
-  [93, 'A'],
-  [90, 'A-'],
-  [87, 'B+'],
-  [83, 'B'],
-  [80, 'B-'],
-  [77, 'C+'],
-  [73, 'C'],
-  [70, 'C-'],
-  [67, 'D+'],
-  [60, 'D'],
+  [92, 'A+'],
+  [83, 'A'],
+  [75, 'A-'],
+  [67, 'B+'],
+  [58, 'B'],
+  [50, 'B-'],
+  [42, 'C+'],
+  [33, 'C'],
+  [25, 'C-'],
+  [17, 'D+'],
+  [8, 'D'],
   [0, 'F'],
 ];
 
