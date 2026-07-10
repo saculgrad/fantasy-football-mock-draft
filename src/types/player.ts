@@ -16,6 +16,7 @@ export interface RankingEntry {
   position: Position;
   team: string | null;
   ecr: number;
+  bye: number | null;
 }
 
 export interface PlayerDataSnapshot {

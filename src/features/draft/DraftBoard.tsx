@@ -17,6 +17,7 @@ import { DRAFT_STATE_STORAGE_KEY } from '../../data/draftStateStorage';
 import { AvailablePlayers } from './AvailablePlayers';
 import { YourQueue } from './YourQueue';
 import { TeamRosterPanel } from './TeamRosterPanel';
+import { DraftGradeCard } from './DraftGradeCard';
 import { PickLog } from './PickLog';
 
 const BOT_PICK_DELAY_MS = 500;
@@ -168,6 +169,9 @@ export function DraftBoard({
       <section className="draft-board">
         <h2>Draft</h2>
         <p className="hint">Draft complete.</p>
+        {leagueConfig && playerData && (
+          <DraftGradeCard draftState={draftState} rosterSlots={leagueConfig.rosterSlots} playerData={playerData} />
+        )}
         {leagueConfig && (
           <TeamRosterPanel
             rosterSlots={leagueConfig.rosterSlots}

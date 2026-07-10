@@ -80,6 +80,46 @@
   gap: 0.75rem;
 }
 
+.draft-grade-card {
+  max-width: 420px;
+  margin-bottom: 1.5rem;
+  padding: 1rem 1.25rem;
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  background: #f9f9f7;
+}
+
+.draft-grade-card h3 {
+  font-size: 1rem;
+  margin: 0;
+}
+
+.draft-grade-letter {
+  font-size: 2.5rem;
+  font-weight: 700;
+  color: #2e6b4f;
+  line-height: 1;
+  margin: 0.5rem 0;
+}
+
+.draft-grade-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.85rem;
+  margin: 0.75rem 0;
+}
+
+.draft-grade-table th,
+.draft-grade-table td {
+  text-align: left;
+  padding: 0.3rem 0.4rem;
+  border-bottom: 1px solid #e5e5e0;
+}
+
+.grade-note {
+  margin-bottom: 0.3rem;
+}
+
 .draft-actions {
   display: flex;
   gap: 0.5rem;

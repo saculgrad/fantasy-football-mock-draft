@@ -12,6 +12,7 @@ export interface ConsensusRankingRow {
   position: Position;
   team: string | null;
   ecr: number;
+  bye: number | null;
   mergeName: string;
 }
 
@@ -27,14 +28,18 @@ export async function fetchConsensusRankings(): Promise<ConsensusRankingRow[]> {
   // cheatsheets) aren't what we want here.
   return rows
     .filter((row) => row.page_type === 'redraft-overall')
-    .map((row) => ({
-      fantasyProsId: row.id,
-      playerName: row.player,
-      position: row.pos as Position,
-      team: row.team && row.team !== 'NA' ? row.team : null,
-      ecr: Number(row.ecr),
-      mergeName: row.mergename,
-    }))
+    .map((row) => {
+      const bye = Number(row.bye);
+      return {
+        fantasyProsId: row.id,
+        playerName: row.player,
+        position: row.pos as Position,
+        team: row.team && row.team !== 'NA' ? row.team : null,
+        ecr: Number(row.ecr),
+        bye: Number.isFinite(bye) ? bye : null,
+        mergeName: row.mergename,
+      };
+    })
     .filter((row) => Number.isFinite(row.ecr));
 }
 

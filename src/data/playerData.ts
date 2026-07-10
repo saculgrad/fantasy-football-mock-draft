@@ -42,6 +42,7 @@ export async function buildPlayerDataSnapshot(): Promise<PlayerDataSnapshot> {
       position: row.position,
       team,
       ecr: row.ecr,
+      bye: row.bye,
     };
   });
 
