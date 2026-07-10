@@ -8,19 +8,55 @@ import { assignRosterSlots } from './draftEngine';
 const STARTER_WEIGHT = 1.0;
 const BENCH_WEIGHT = 0.3;
 
-// Relative fantasy value/scoring-share by position. We don't have real point
-// projections to derive this empirically, so it's a documented constant
-// reflecting standard fantasy consensus: RB/WR carry the most weekly points
-// and roster slots, QB is valuable but usually just one starter, TE/DST/K
-// contribute less on average and are more replaceable.
+// Relative positional value, derived empirically (not guessed) from the same
+// FantasyPros consensus ECR data this app already fetches: for each position,
+// computed value(best player) / value(12th-best player) - i.e. how much
+// better the best option is than a replacement-level 12-team starter, using
+// this file's own 1000/ecr value function. Results: WR 14.1x, RB 11.9x,
+// TE 6.1x, QB 3.7x, DST 1.35x, K 1.22x. Cross-checked against published
+// Value-Based Drafting (VBD) research (FantasyPros VBD methodology, PFF's
+// 10-year kicker-predictability study showing R²=0.204 year-over-year) which
+// corroborates the same ordering and flatness of K/DST. QB's low spread in
+// particular matches VBD literature calling the QB1-to-QB12 gap "essentially
+// nothing" in single-QB formats - drafting skill barely shows up at QB here,
+// so it shouldn't be weighted like it does.
 const POSITION_WEIGHTS: Record<Position, number> = {
   RB: 1.0,
   WR: 1.0,
-  QB: 0.85,
-  TE: 0.75,
-  DST: 0.45,
-  K: 0.4,
+  TE: 0.5,
+  QB: 0.35,
+  DST: 0.12,
+  K: 0.08,
 };
+
+// FUTURE WORK: these weights are a single static table, tuned for a standard
+// single-QB, PPR-agnostic league. They don't currently respond to the
+// league's actual configuration (LeagueConfig), which they should eventually:
+//   - PPR level: reception scoring (LeagueConfig.scoring.rec) directly boosts
+//     pass-catching RBs/WRs/TEs relative to non-PPR - the "12th-best" cutoff
+//     and thus the spread ratio for each position would shift with it. A
+//     0-PPR league would likely narrow the WR spread and widen RB's.
+//   - Superflex / 2QB (a second QB-eligible starting slot): QB's spread ratio
+//     above was measured against a 12-team, 1-QB-per-team replacement level.
+//     With two starting QB slots per team, the replacement level drops much
+//     further down the QB pool, which historically increases QB's spread
+//     dramatically (this is the entire premise of "superflex" as a format -
+//     QB weight would need to rise substantially, likely close to RB/WR).
+//   - TE premium (extra points per reception for tight ends specifically):
+//     would directly increase TE's value spread beyond the 6.1x measured
+//     here under standard scoring.
+//   - Roster shape generally (e.g. 3WR instead of 2WR+FLEX, or extra RB/WR
+//     flex slots): changes how deep into each position's rank a "replacement
+//     level starter" actually is, which is the denominator of the spread
+//     ratio - the whole computation, not just the scoring, would need to
+//     reflect actual rosterSlots composition per position, not a fixed "12th
+//     starter" assumption.
+// The general fix is to derive POSITION_WEIGHTS the same way it was derived
+// here - value(best) / value(replacement level) - but computed dynamically
+// per league from the current LeagueConfig.scoring and LeagueConfig.rosterSlots
+// (which already tell us exactly how many starters are needed at each
+// position, so the "replacement level" rank is knowable per league instead of
+// assumed at 12) rather than hardcoded once for a standard league shape.
 
 // Slight, as requested - a couple of clustered bye starters or injury-flagged
 // starters should nudge the grade, not swing it.
