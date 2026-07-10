@@ -1,14 +1,15 @@
 import { useState } from 'react';
 import type { PlayerDataSnapshot } from '../../types/player';
 import { buildPlayerDataSnapshot } from '../../data/playerData';
-import { loadFromStorage, saveToStorage } from '../../storage/localStorage';
+import { saveToStorage } from '../../storage/localStorage';
+import { PLAYER_DATA_STORAGE_KEY } from '../../data/playerDataStorage';
 
-const STORAGE_KEY = 'ffMockDraft:playerData';
+interface PlayerDataPanelProps {
+  snapshot: PlayerDataSnapshot | null;
+  onSnapshotChange: (snapshot: PlayerDataSnapshot) => void;
+}
 
-export function PlayerDataPanel() {
-  const [snapshot, setSnapshot] = useState<PlayerDataSnapshot | null>(() =>
-    loadFromStorage<PlayerDataSnapshot>(STORAGE_KEY),
-  );
+export function PlayerDataPanel({ snapshot, onSnapshotChange }: PlayerDataPanelProps) {
   const [status, setStatus] = useState<'idle' | 'loading' | 'error'>('idle');
   const [error, setError] = useState<string | null>(null);
 
@@ -17,8 +18,8 @@ export function PlayerDataPanel() {
     setError(null);
     try {
       const next = await buildPlayerDataSnapshot();
-      saveToStorage(STORAGE_KEY, next);
-      setSnapshot(next);
+      saveToStorage(PLAYER_DATA_STORAGE_KEY, next);
+      onSnapshotChange(next);
       setStatus('idle');
     } catch (err) {
       setStatus('error');
