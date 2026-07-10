@@ -25,9 +25,10 @@ interface DraftBoardProps {
   leagueConfig: LeagueConfig | null;
   playerData: PlayerDataSnapshot | null;
   personalRankings: PersonalRankings | null;
+  onDraftStart?: () => void;
 }
 
-export function DraftBoard({ leagueConfig, playerData, personalRankings }: DraftBoardProps) {
+export function DraftBoard({ leagueConfig, playerData, personalRankings, onDraftStart }: DraftBoardProps) {
   const [draftState, setDraftState] = useState<DraftState | null>(() =>
     loadFromStorage<DraftState>(DRAFT_STATE_STORAGE_KEY),
   );
@@ -88,6 +89,7 @@ export function DraftBoard({ leagueConfig, playerData, personalRankings }: Draft
     const yourTeamIndex =
       leagueConfig.draftOrder === 'random' ? Math.floor(Math.random() * leagueConfig.teamCount) : selectedSlot - 1;
     setDraftState(createDraftState(leagueConfig.teamCount, leagueConfig.rosterSlots.length, yourTeamIndex));
+    onDraftStart?.();
   }
 
   function draftPlayer(sleeperId: string) {

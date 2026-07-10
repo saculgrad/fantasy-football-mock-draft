@@ -44,6 +44,26 @@
   border-bottom: 1px solid #ddd;
 }
 
+.section-header-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 0.5rem;
+}
+
+.section-header-row h2 {
+  font-size: 1.1rem;
+  margin-bottom: 0;
+}
+
+.collapse-toggle {
+  background: transparent;
+  color: #2e6b4f;
+  border: 1px solid #2e6b4f;
+  padding: 0.2rem 0.7rem;
+  font-size: 0.78rem;
+}
+
 .draft-board {
   margin-bottom: 2.5rem;
 }
@@ -199,11 +219,6 @@
 .position-filter.active {
   background: #2e6b4f;
   color: white;
-}
-
-.personal-rankings-board h2 {
-  font-size: 1.1rem;
-  margin-bottom: 0.5rem;
 }
 
 .rankings-actions {

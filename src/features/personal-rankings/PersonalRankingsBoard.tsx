@@ -30,9 +30,16 @@ function findTierIndexById(tiers: RankingTier[], id: string): number {
 interface PersonalRankingsBoardProps {
   playerData: PlayerDataSnapshot | null;
   onRankingsChange?: (rankings: PersonalRankings) => void;
+  collapsed: boolean;
+  onToggleCollapsed: () => void;
 }
 
-export function PersonalRankingsBoard({ playerData, onRankingsChange }: PersonalRankingsBoardProps) {
+export function PersonalRankingsBoard({
+  playerData,
+  onRankingsChange,
+  collapsed,
+  onToggleCollapsed,
+}: PersonalRankingsBoardProps) {
   const [rankings, setRankings] = useState<PersonalRankings | null>(() =>
     loadFromStorage<PersonalRankings>(PERSONAL_RANKINGS_STORAGE_KEY),
   );
@@ -157,60 +164,78 @@ export function PersonalRankingsBoard({ playerData, onRankingsChange }: Personal
   }
 
   const activePlayer = activeId ? playersById.get(activeId) : undefined;
+  const tierCount = rankings?.tiers.length ?? 0;
+  const totalPlayers = rankings?.tiers.reduce((sum, t) => sum + t.playerIds.length, 0) ?? 0;
 
   return (
     <section className="personal-rankings-board">
-      <h2>Personal rankings</h2>
-      {!playerData && <p className="hint">Fetch player data above before seeding or importing rankings.</p>}
-
-      <div className="rankings-actions">
-        <button type="button" onClick={seed} disabled={!playerData}>
-          Seed from public rankings
+      <div className="section-header-row">
+        <h2>Personal rankings</h2>
+        <button type="button" className="collapse-toggle" onClick={onToggleCollapsed}>
+          {collapsed ? 'Show' : 'Hide'}
         </button>
-        <button type="button" onClick={addTier}>
-          + Add tier
-        </button>
-        <label className="csv-import-label">
-          Import CSV
-          <input
-            type="file"
-            accept=".csv,text/csv"
-            disabled={!playerData}
-            onChange={(e) => {
-              const file = e.target.files?.[0];
-              if (file) void handleCsvFile(file);
-              e.target.value = '';
-            }}
-          />
-        </label>
       </div>
-      {importSummary && <p className="hint">{importSummary}</p>}
 
-      {rankings && rankings.tiers.length > 0 ? (
-        <DndContext
-          sensors={sensors}
-          collisionDetection={closestCenter}
-          onDragStart={handleDragStart}
-          onDragEnd={handleDragEnd}
-        >
-          <div className="tier-list">
-            {rankings.tiers.map((tier) => (
-              <TierColumn
-                key={tier.id}
-                tier={tier}
-                playersById={playersById}
-                onRename={(name) => renameTier(tier.id, name)}
-                onDelete={() => deleteTier(tier.id)}
-                onRemovePlayer={(playerId) => removePlayer(tier.id, playerId)}
-              />
-            ))}
-          </div>
-          <DragOverlay>
-            {activePlayer ? <PlayerRow playerId={activePlayer.sleeperId} player={activePlayer} onRemove={() => {}} /> : null}
-          </DragOverlay>
-        </DndContext>
+      {collapsed ? (
+        <p className="hint">
+          {tierCount > 0 ? `${tierCount} tier${tierCount === 1 ? '' : 's'}, ${totalPlayers} players — collapsed` : 'No rankings yet.'}
+        </p>
       ) : (
-        <p className="hint">No rankings yet — seed from public rankings or import a CSV.</p>
+        <>
+          {!playerData && <p className="hint">Fetch player data above before seeding or importing rankings.</p>}
+
+          <div className="rankings-actions">
+            <button type="button" onClick={seed} disabled={!playerData}>
+              Seed from public rankings
+            </button>
+            <button type="button" onClick={addTier}>
+              + Add tier
+            </button>
+            <label className="csv-import-label">
+              Import CSV
+              <input
+                type="file"
+                accept=".csv,text/csv"
+                disabled={!playerData}
+                onChange={(e) => {
+                  const file = e.target.files?.[0];
+                  if (file) void handleCsvFile(file);
+                  e.target.value = '';
+                }}
+              />
+            </label>
+          </div>
+          {importSummary && <p className="hint">{importSummary}</p>}
+
+          {rankings && rankings.tiers.length > 0 ? (
+            <DndContext
+              sensors={sensors}
+              collisionDetection={closestCenter}
+              onDragStart={handleDragStart}
+              onDragEnd={handleDragEnd}
+            >
+              <div className="tier-list">
+                {rankings.tiers.map((tier) => (
+                  <TierColumn
+                    key={tier.id}
+                    tier={tier}
+                    playersById={playersById}
+                    onRename={(name) => renameTier(tier.id, name)}
+                    onDelete={() => deleteTier(tier.id)}
+                    onRemovePlayer={(playerId) => removePlayer(tier.id, playerId)}
+                  />
+                ))}
+              </div>
+              <DragOverlay>
+                {activePlayer ? (
+                  <PlayerRow playerId={activePlayer.sleeperId} player={activePlayer} onRemove={() => {}} />
+                ) : null}
+              </DragOverlay>
+            </DndContext>
+          ) : (
+            <p className="hint">No rankings yet — seed from public rankings or import a CSV.</p>
+          )}
+        </>
       )}
     </section>
   );
