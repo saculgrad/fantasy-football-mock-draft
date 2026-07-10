@@ -87,6 +87,14 @@ export function PersonalRankingsBoard({
   }
 
   function deleteTier(tierId: string) {
+    const tier = rankings?.tiers.find((t) => t.id === tierId);
+    if (tier && tier.playerIds.length > 0) {
+      const count = tier.playerIds.length;
+      const confirmed = window.confirm(
+        `Delete "${tier.name}" and its ${count} player${count === 1 ? '' : 's'}? This can't be undone.`,
+      );
+      if (!confirmed) return;
+    }
     setRankings((prev) =>
       prev ? { ...prev, tiers: prev.tiers.filter((t) => t.id !== tierId), updatedAt: new Date().toISOString() } : prev,
     );
@@ -104,6 +112,34 @@ export function PersonalRankingsBoard({
           }
         : prev,
     );
+  }
+
+  function movePlayerWithinTier(tierId: string, playerId: string, direction: 'up' | 'down') {
+    setRankings((prev) => {
+      if (!prev) return prev;
+      const tiers = prev.tiers.map((t) => ({ ...t, playerIds: [...t.playerIds] }));
+      const tier = tiers.find((t) => t.id === tierId);
+      if (!tier) return prev;
+      const index = tier.playerIds.indexOf(playerId);
+      const swapWith = direction === 'up' ? index - 1 : index + 1;
+      if (index === -1 || swapWith < 0 || swapWith >= tier.playerIds.length) return prev;
+      [tier.playerIds[index], tier.playerIds[swapWith]] = [tier.playerIds[swapWith], tier.playerIds[index]];
+      return { ...prev, tiers, updatedAt: new Date().toISOString() };
+    });
+  }
+
+  function movePlayerToTier(sourceTierId: string, playerId: string, targetTierId: string) {
+    if (sourceTierId === targetTierId) return;
+    setRankings((prev) => {
+      if (!prev) return prev;
+      const tiers = prev.tiers.map((t) => ({ ...t, playerIds: [...t.playerIds] }));
+      const source = tiers.find((t) => t.id === sourceTierId);
+      const target = tiers.find((t) => t.id === targetTierId);
+      if (!source || !target) return prev;
+      source.playerIds = source.playerIds.filter((id) => id !== playerId);
+      target.playerIds.push(playerId);
+      return { ...prev, tiers, updatedAt: new Date().toISOString() };
+    });
   }
 
   function handleDragStart(event: DragStartEvent) {
@@ -219,10 +255,13 @@ export function PersonalRankingsBoard({
                   <TierColumn
                     key={tier.id}
                     tier={tier}
+                    allTiers={rankings.tiers}
                     playersById={playersById}
                     onRename={(name) => renameTier(tier.id, name)}
                     onDelete={() => deleteTier(tier.id)}
                     onRemovePlayer={(playerId) => removePlayer(tier.id, playerId)}
+                    onMovePlayer={(playerId, direction) => movePlayerWithinTier(tier.id, playerId, direction)}
+                    onMovePlayerToTier={(playerId, targetTierId) => movePlayerToTier(tier.id, playerId, targetTierId)}
                   />
                 ))}
               </div>
