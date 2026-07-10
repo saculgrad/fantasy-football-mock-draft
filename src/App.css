@@ -11,6 +11,33 @@
   margin-bottom: 1.5rem;
 }
 
+.player-data-panel {
+  margin-bottom: 2.5rem;
+  padding-bottom: 2rem;
+  border-bottom: 1px solid #ddd;
+}
+
+.player-data-panel h2 {
+  font-size: 1.1rem;
+  margin-bottom: 0.5rem;
+}
+
+.player-data-stats {
+  list-style: none;
+  padding: 0;
+  margin: 0 0 1rem;
+  font-size: 0.9rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+}
+
+.error-note {
+  color: #a83232;
+  font-size: 0.85rem;
+  margin-top: 0.5rem;
+}
+
 .league-config-form section {
   margin-bottom: 2rem;
 }
