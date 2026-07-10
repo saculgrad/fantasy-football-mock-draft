@@ -4,6 +4,10 @@ export type Position = 'QB' | 'RB' | 'WR' | 'TE' | 'DST' | 'K';
 
 export const ALL_POSITIONS: Position[] = ['QB', 'RB', 'WR', 'TE', 'DST', 'K'];
 
+// Shared "position tab" list (an 'ALL' option plus every position) - used by
+// any UI that lets you filter a player list down to one position.
+export const POSITION_FILTER_OPTIONS: Array<Position | 'ALL'> = ['ALL', ...ALL_POSITIONS];
+
 // A roster is just an ordered list of slots. There's no dedicated "flex" or
 // "superflex" concept in the type system — those are only ever a slot whose
 // eligiblePositions happens to include more than one position. Any league

@@ -1,6 +1,7 @@
+import { useState } from 'react';
 import type { PersonalRankings } from '../../types/personalRankings';
 import type { Player } from '../../types/player';
-import type { Position } from '../../types/league';
+import { POSITION_FILTER_OPTIONS, type Position } from '../../types/league';
 
 interface YourQueueProps {
   personalRankings: PersonalRankings | null;
@@ -13,7 +14,16 @@ interface YourQueueProps {
 
 const MAX_ROWS_PER_TIER = 15;
 
-export function YourQueue({ personalRankings, playersById, draftedIds, canDraft, openPositions, onDraft }: YourQueueProps) {
+export function YourQueue({
+  personalRankings,
+  playersById,
+  draftedIds,
+  canDraft,
+  openPositions,
+  onDraft,
+}: YourQueueProps) {
+  const [filter, setFilter] = useState<Position | 'ALL'>('ALL');
+
   if (!personalRankings || personalRankings.tiers.length === 0) {
     return (
       <div className="your-queue">
@@ -23,12 +33,32 @@ export function YourQueue({ personalRankings, playersById, draftedIds, canDraft,
     );
   }
 
+  const visibleTiers = personalRankings.tiers
+    .map((tier) => ({
+      tier,
+      available: tier.playerIds
+        .filter((id) => !draftedIds.has(id))
+        .filter((id) => filter === 'ALL' || playersById.get(id)?.position === filter),
+    }))
+    .filter(({ available }) => available.length > 0);
+
   return (
     <div className="your-queue">
       <h3>Your queue</h3>
-      {personalRankings.tiers.map((tier) => {
-        const available = tier.playerIds.filter((id) => !draftedIds.has(id));
-        if (available.length === 0) return null;
+      <div className="position-filters">
+        {POSITION_FILTER_OPTIONS.map((pos) => (
+          <button
+            key={pos}
+            type="button"
+            className={filter === pos ? 'position-filter active' : 'position-filter'}
+            onClick={() => setFilter(pos)}
+          >
+            {pos}
+          </button>
+        ))}
+      </div>
+      {visibleTiers.length === 0 && <p className="hint">No {filter === 'ALL' ? '' : `${filter} `}players left in your queue.</p>}
+      {visibleTiers.map(({ tier, available }) => {
         const shown = available.slice(0, MAX_ROWS_PER_TIER);
         const remaining = available.length - shown.length;
         return (

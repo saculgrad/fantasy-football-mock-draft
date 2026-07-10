@@ -1,6 +1,6 @@
 import { useMemo, useState } from 'react';
 import type { RankingEntry, Player } from '../../types/player';
-import type { Position } from '../../types/league';
+import { POSITION_FILTER_OPTIONS, type Position } from '../../types/league';
 
 interface AvailablePlayersProps {
   rankings: RankingEntry[];
@@ -10,8 +10,6 @@ interface AvailablePlayersProps {
   openPositions: Set<Position>;
   onDraft: (sleeperId: string) => void;
 }
-
-const POSITION_FILTERS: Array<Position | 'ALL'> = ['ALL', 'QB', 'RB', 'WR', 'TE', 'DST', 'K'];
 
 export function AvailablePlayers({
   rankings,
@@ -39,7 +37,7 @@ export function AvailablePlayers({
     <div className="available-players">
       <h3>Available players</h3>
       <div className="position-filters">
-        {POSITION_FILTERS.map((pos) => (
+        {POSITION_FILTER_OPTIONS.map((pos) => (
           <button
             key={pos}
             type="button"
