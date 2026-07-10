@@ -11,3 +11,7 @@ export function loadFromStorage<T>(key: string): T | null {
 export function saveToStorage<T>(key: string, value: T): void {
   localStorage.setItem(key, JSON.stringify(value));
 }
+
+export function removeFromStorage(key: string): void {
+  localStorage.removeItem(key);
+}

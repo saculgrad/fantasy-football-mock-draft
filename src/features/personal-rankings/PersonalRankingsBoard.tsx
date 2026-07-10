@@ -13,12 +13,11 @@ import { arrayMove } from '@dnd-kit/sortable';
 import type { PersonalRankings, RankingTier } from '../../types/personalRankings';
 import type { Player, PlayerDataSnapshot } from '../../types/player';
 import { loadFromStorage, saveToStorage } from '../../storage/localStorage';
+import { PERSONAL_RANKINGS_STORAGE_KEY } from '../../data/personalRankingsStorage';
 import { seedFromPublicRankings } from '../../data/seedRankings';
 import { parseRankingCsv } from '../../data/csvImport';
 import { TierColumn } from './TierColumn';
 import { PlayerRow } from './PlayerRow';
-
-const STORAGE_KEY = 'ffMockDraft:personalRankings';
 
 function findTierIndexForPlayer(tiers: RankingTier[], playerId: string): number {
   return tiers.findIndex((t) => t.playerIds.includes(playerId));
@@ -30,11 +29,12 @@ function findTierIndexById(tiers: RankingTier[], id: string): number {
 
 interface PersonalRankingsBoardProps {
   playerData: PlayerDataSnapshot | null;
+  onRankingsChange?: (rankings: PersonalRankings) => void;
 }
 
-export function PersonalRankingsBoard({ playerData }: PersonalRankingsBoardProps) {
+export function PersonalRankingsBoard({ playerData, onRankingsChange }: PersonalRankingsBoardProps) {
   const [rankings, setRankings] = useState<PersonalRankings | null>(() =>
-    loadFromStorage<PersonalRankings>(STORAGE_KEY),
+    loadFromStorage<PersonalRankings>(PERSONAL_RANKINGS_STORAGE_KEY),
   );
   const [activeId, setActiveId] = useState<string | null>(null);
   const [importSummary, setImportSummary] = useState<string | null>(null);
@@ -48,8 +48,11 @@ export function PersonalRankingsBoard({ playerData }: PersonalRankingsBoardProps
   }, [playerData]);
 
   useEffect(() => {
-    if (rankings) saveToStorage(STORAGE_KEY, rankings);
-  }, [rankings]);
+    if (rankings) {
+      saveToStorage(PERSONAL_RANKINGS_STORAGE_KEY, rankings);
+      onRankingsChange?.(rankings);
+    }
+  }, [rankings, onRankingsChange]);
 
   function seed() {
     if (!playerData) return;

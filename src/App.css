@@ -44,6 +44,119 @@
   border-bottom: 1px solid #ddd;
 }
 
+.draft-board {
+  margin-bottom: 2.5rem;
+}
+
+.draft-board h2 {
+  font-size: 1.1rem;
+  margin-bottom: 0.5rem;
+}
+
+.draft-start-panel {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.75rem;
+}
+
+.draft-actions {
+  display: flex;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+}
+
+.draft-layout {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.draft-layout h3 {
+  font-size: 0.95rem;
+  margin-bottom: 0.5rem;
+  border-bottom: 1px solid #e0e0e0;
+  padding-bottom: 0.3rem;
+}
+
+.draft-layout h4 {
+  font-size: 0.85rem;
+  color: #555;
+  margin: 0.5rem 0 0.25rem;
+}
+
+.your-roster-list,
+.pick-log-list,
+.your-queue ul,
+.available-players-list {
+  list-style: none;
+  margin: 0 0 0.5rem;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.your-roster-row,
+.pick-log-row,
+.your-queue-row,
+.available-players-row {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  padding: 0.3rem 0.5rem;
+  background: #f6f6f4;
+  border: 1px solid #e5e5e0;
+  border-radius: 4px;
+  font-size: 0.85rem;
+}
+
+.your-roster-slot {
+  font-weight: 600;
+  min-width: 70px;
+}
+
+.pick-log-row.you {
+  background: #e3ece4;
+  border-color: #b9d3bd;
+}
+
+.pick-log-number {
+  font-family: ui-monospace, monospace;
+  font-size: 0.78rem;
+  color: #666;
+  min-width: 40px;
+}
+
+.pick-log-team {
+  font-weight: 600;
+  min-width: 70px;
+}
+
+.your-queue-row,
+.available-players-row {
+  justify-content: space-between;
+}
+
+.position-filters {
+  display: flex;
+  gap: 0.3rem;
+  margin-bottom: 0.5rem;
+}
+
+.position-filter {
+  background: transparent;
+  color: #2e6b4f;
+  border: 1px solid #2e6b4f;
+  padding: 0.2rem 0.6rem;
+  font-size: 0.78rem;
+}
+
+.position-filter.active {
+  background: #2e6b4f;
+  color: white;
+}
+
 .personal-rankings-board h2 {
   font-size: 1.1rem;
   margin-bottom: 0.5rem;

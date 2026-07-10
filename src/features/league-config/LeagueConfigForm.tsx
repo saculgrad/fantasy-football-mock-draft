@@ -6,15 +6,19 @@ import {
   type ScoringPresetKey,
 } from '../../data/presets';
 import { loadFromStorage, saveToStorage } from '../../storage/localStorage';
+import { LEAGUE_CONFIG_STORAGE_KEY } from '../../data/leagueConfigStorage';
 import { RosterSlotEditor } from './RosterSlotEditor';
 import { ScoringEditor } from './ScoringEditor';
 
-const STORAGE_KEY = 'ffMockDraft:leagueConfig';
 const PRESET_KEYS: ScoringPresetKey[] = ['standard', 'half-ppr', 'full-ppr'];
 
-export function LeagueConfigForm() {
+interface LeagueConfigFormProps {
+  onSave?: (config: LeagueConfig) => void;
+}
+
+export function LeagueConfigForm({ onSave }: LeagueConfigFormProps) {
   const [config, setConfig] = useState<LeagueConfig>(
-    () => loadFromStorage<LeagueConfig>(STORAGE_KEY) ?? createPresetLeagueConfig('standard', 10),
+    () => loadFromStorage<LeagueConfig>(LEAGUE_CONFIG_STORAGE_KEY) ?? createPresetLeagueConfig('standard', 10),
   );
   const [savedAt, setSavedAt] = useState<number | null>(null);
 
@@ -27,8 +31,9 @@ export function LeagueConfigForm() {
   }
 
   function save() {
-    saveToStorage(STORAGE_KEY, config);
+    saveToStorage(LEAGUE_CONFIG_STORAGE_KEY, config);
     setSavedAt(Date.now());
+    onSave?.(config);
   }
 
   return (
