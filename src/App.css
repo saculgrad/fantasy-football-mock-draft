@@ -327,14 +327,32 @@
   touch-action: none;
 }
 
+.player-row-info {
+  display: flex;
+  align-items: baseline;
+  gap: 0.5rem;
+  flex: 1;
+  min-width: 0;
+}
+
 .player-row-name {
   font-weight: 500;
-  flex: 1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .player-row-meta {
   color: #666;
   font-size: 0.8rem;
+  flex-shrink: 0;
+}
+
+.player-row-controls {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  flex-shrink: 0;
 }
 
 .player-row-remove {
@@ -449,8 +467,13 @@
   gap: 0.5rem;
 }
 
+.table-wrap {
+  overflow-x: auto;
+}
+
 .roster-table {
   width: 100%;
+  min-width: 620px;
   border-collapse: collapse;
   font-size: 0.85rem;
   margin-bottom: 0.75rem;
@@ -519,4 +542,71 @@ button:hover {
 .saved-note {
   color: #2e6b4f;
   font-size: 0.85rem;
+}
+
+/* Phone-width overrides. The @media (max-width: 900px) block above already
+   collapses the draft board to one column; this block handles everything
+   else that's still cramped or too small to tap once you're actually down
+   at phone widths (~375-390px), without touching desktop/tablet at all. */
+@media (max-width: 640px) {
+  .app-shell {
+    padding: 1rem 0.85rem 3rem;
+  }
+
+  .app-shell header h1 {
+    font-size: 1.25rem;
+  }
+
+  /* Player rows (personal rankings + draft board lists) wrap onto a second
+     line instead of squeezing everything into one row or overflowing. */
+  .player-row {
+    flex-wrap: wrap;
+  }
+
+  .player-row-controls {
+    width: 100%;
+    justify-content: flex-end;
+  }
+
+  .player-row-move-btn {
+    font-size: 0.85rem;
+    padding: 0.3rem 0.55rem;
+  }
+
+  .player-row-remove {
+    font-size: 1.3rem;
+    padding: 0 0.4rem;
+  }
+
+  .your-roster-row,
+  .pick-log-row,
+  .your-queue-row,
+  .available-players-row {
+    flex-wrap: wrap;
+  }
+
+  .position-filters {
+    flex-wrap: wrap;
+  }
+
+  .position-filter {
+    padding: 0.35rem 0.7rem;
+    font-size: 0.82rem;
+  }
+
+  .scoring-editor {
+    grid-template-columns: 1fr;
+  }
+
+  .draft-grade-card {
+    max-width: 100%;
+  }
+
+  .rankings-actions {
+    gap: 0.5rem;
+  }
+
+  .csv-import-label {
+    flex-wrap: wrap;
+  }
 }

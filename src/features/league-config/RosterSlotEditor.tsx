@@ -34,52 +34,54 @@ export function RosterSlotEditor({ slots, onChange }: RosterSlotEditorProps) {
 
   return (
     <div className="roster-editor">
-      <table className="roster-table">
-        <thead>
-          <tr>
-            <th>Label</th>
-            {ALL_POSITIONS.map((p) => (
-              <th key={p}>{p}</th>
-            ))}
-            <th>Bench</th>
-            <th></th>
-          </tr>
-        </thead>
-        <tbody>
-          {slots.map((s) => (
-            <tr key={s.id}>
-              <td>
-                <input
-                  type="text"
-                  value={s.label}
-                  onChange={(e) => updateSlot(s.id, { label: e.target.value })}
-                />
-              </td>
+      <div className="table-wrap">
+        <table className="roster-table">
+          <thead>
+            <tr>
+              <th>Label</th>
               {ALL_POSITIONS.map((p) => (
-                <td key={p}>
+                <th key={p}>{p}</th>
+              ))}
+              <th>Bench</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody>
+            {slots.map((s) => (
+              <tr key={s.id}>
+                <td>
                   <input
-                    type="checkbox"
-                    checked={s.eligiblePositions.includes(p)}
-                    onChange={() => togglePosition(s.id, p)}
+                    type="text"
+                    value={s.label}
+                    onChange={(e) => updateSlot(s.id, { label: e.target.value })}
                   />
                 </td>
-              ))}
-              <td>
-                <input
-                  type="checkbox"
-                  checked={!!s.isBench}
-                  onChange={(e) => updateSlot(s.id, { isBench: e.target.checked })}
-                />
-              </td>
-              <td>
-                <button type="button" onClick={() => removeSlot(s.id)}>
-                  Remove
-                </button>
-              </td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
+                {ALL_POSITIONS.map((p) => (
+                  <td key={p}>
+                    <input
+                      type="checkbox"
+                      checked={s.eligiblePositions.includes(p)}
+                      onChange={() => togglePosition(s.id, p)}
+                    />
+                  </td>
+                ))}
+                <td>
+                  <input
+                    type="checkbox"
+                    checked={!!s.isBench}
+                    onChange={(e) => updateSlot(s.id, { isBench: e.target.checked })}
+                  />
+                </td>
+                <td>
+                  <button type="button" onClick={() => removeSlot(s.id)}>
+                    Remove
+                  </button>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
       <button type="button" onClick={addSlot}>
         + Add slot
       </button>
