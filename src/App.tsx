@@ -29,6 +29,12 @@ function App() {
   const [personalRankingsCollapsed, setPersonalRankingsCollapsed] = useState(
     () => loadFromStorage<DraftState>(DRAFT_STATE_STORAGE_KEY)?.status === 'in_progress',
   );
+  // Mirrors whether a draft is actively in progress, so League Setup can lock
+  // itself - kept in sync continuously (not one-shot) via DraftBoard's
+  // onDraftActiveChange, since it needs to unlock again on completion/abandon.
+  const [draftActive, setDraftActive] = useState(
+    () => loadFromStorage<DraftState>(DRAFT_STATE_STORAGE_KEY)?.status === 'in_progress',
+  );
 
   return (
     <main className="app-shell">
@@ -42,12 +48,13 @@ function App() {
         collapsed={personalRankingsCollapsed}
         onToggleCollapsed={() => setPersonalRankingsCollapsed((c) => !c)}
       />
-      <LeagueConfigForm onSave={setLeagueConfig} />
+      <LeagueConfigForm onSave={setLeagueConfig} locked={draftActive} />
       <DraftBoard
         leagueConfig={leagueConfig}
         playerData={playerData}
         personalRankings={personalRankings}
         onDraftStart={() => setPersonalRankingsCollapsed(true)}
+        onDraftActiveChange={setDraftActive}
       />
     </main>
   );

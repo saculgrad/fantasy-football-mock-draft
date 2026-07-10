@@ -26,9 +26,16 @@ interface DraftBoardProps {
   playerData: PlayerDataSnapshot | null;
   personalRankings: PersonalRankings | null;
   onDraftStart?: () => void;
+  onDraftActiveChange?: (active: boolean) => void;
 }
 
-export function DraftBoard({ leagueConfig, playerData, personalRankings, onDraftStart }: DraftBoardProps) {
+export function DraftBoard({
+  leagueConfig,
+  playerData,
+  personalRankings,
+  onDraftStart,
+  onDraftActiveChange,
+}: DraftBoardProps) {
   const [draftState, setDraftState] = useState<DraftState | null>(() =>
     loadFromStorage<DraftState>(DRAFT_STATE_STORAGE_KEY),
   );
@@ -37,6 +44,13 @@ export function DraftBoard({ leagueConfig, playerData, personalRankings, onDraft
   useEffect(() => {
     if (draftState) saveToStorage(DRAFT_STATE_STORAGE_KEY, draftState);
   }, [draftState]);
+
+  // Mirrors "is a draft actively in progress" up to the parent so other
+  // sections (League Setup) can lock themselves - editing roster slots or
+  // team count mid-draft would desync from what the draft already committed to.
+  useEffect(() => {
+    onDraftActiveChange?.(draftState?.status === 'in_progress');
+  }, [draftState, onDraftActiveChange]);
 
   const playersById = useMemo(() => {
     const map = new Map<string, Player>();
