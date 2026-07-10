@@ -16,7 +16,7 @@ import { loadFromStorage, removeFromStorage, saveToStorage } from '../../storage
 import { DRAFT_STATE_STORAGE_KEY } from '../../data/draftStateStorage';
 import { AvailablePlayers } from './AvailablePlayers';
 import { YourQueue } from './YourQueue';
-import { YourRoster } from './YourRoster';
+import { TeamRosterPanel } from './TeamRosterPanel';
 import { PickLog } from './PickLog';
 
 const BOT_PICK_DELAY_MS = 500;
@@ -152,7 +152,15 @@ export function DraftBoard({ leagueConfig, playerData, personalRankings }: Draft
       <section className="draft-board">
         <h2>Draft</h2>
         <p className="hint">Draft complete.</p>
-        {leagueConfig && <YourRoster rosterSlots={leagueConfig.rosterSlots} draftedPlayers={yourDraftedPlayers} />}
+        {leagueConfig && (
+          <TeamRosterPanel
+            rosterSlots={leagueConfig.rosterSlots}
+            picks={draftState.picks}
+            teamCount={draftState.teamCount}
+            yourTeamIndex={draftState.yourTeamIndex}
+            playersById={playersById}
+          />
+        )}
         <button type="button" onClick={resetDraft}>
           Start new draft
         </button>
@@ -176,25 +184,39 @@ export function DraftBoard({ leagueConfig, playerData, personalRankings }: Draft
       </div>
 
       <div className="draft-layout">
-        {leagueConfig && <YourRoster rosterSlots={leagueConfig.rosterSlots} draftedPlayers={yourDraftedPlayers} />}
-        <YourQueue
-          personalRankings={personalRankings}
-          playersById={playersById}
-          draftedIds={draftedIds}
-          canDraft={canDraft}
-          openPositions={yourOpenPositions}
-          onDraft={draftPlayer}
-        />
-        {playerData && (
-          <AvailablePlayers
-            rankings={playerData.rankings}
+        <div className="draft-column-roster">
+          {leagueConfig && (
+            <TeamRosterPanel
+              rosterSlots={leagueConfig.rosterSlots}
+              picks={draftState.picks}
+              teamCount={draftState.teamCount}
+              yourTeamIndex={draftState.yourTeamIndex}
+              playersById={playersById}
+            />
+          )}
+        </div>
+
+        <div className="draft-column-players">
+          <YourQueue
+            personalRankings={personalRankings}
             playersById={playersById}
             draftedIds={draftedIds}
             canDraft={canDraft}
             openPositions={yourOpenPositions}
             onDraft={draftPlayer}
           />
-        )}
+          {playerData && (
+            <AvailablePlayers
+              rankings={playerData.rankings}
+              playersById={playersById}
+              draftedIds={draftedIds}
+              canDraft={canDraft}
+              openPositions={yourOpenPositions}
+              onDraft={draftPlayer}
+            />
+          )}
+        </div>
+
         <PickLog
           picks={draftState.picks}
           teamCount={draftState.teamCount}

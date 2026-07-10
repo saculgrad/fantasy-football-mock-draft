@@ -1,5 +1,5 @@
 .app-shell {
-  max-width: 720px;
+  max-width: 1100px;
   margin: 0 auto;
   padding: 2rem 1.5rem 4rem;
   font-family: system-ui, sans-serif;
@@ -67,9 +67,41 @@
 }
 
 .draft-layout {
+  display: grid;
+  grid-template-columns: minmax(260px, 320px) 1fr;
+  gap: 1.5rem;
+  align-items: start;
+}
+
+.draft-column-roster {
+  grid-column: 1;
+}
+
+.draft-column-players {
+  grid-column: 2;
   display: flex;
   flex-direction: column;
   gap: 1.5rem;
+  min-width: 0;
+}
+
+.draft-layout .pick-log {
+  grid-column: 1 / -1;
+}
+
+@media (max-width: 900px) {
+  .draft-layout {
+    grid-template-columns: 1fr;
+  }
+
+  .draft-column-roster,
+  .draft-column-players {
+    grid-column: 1;
+  }
+}
+
+.team-roster-select {
+  margin-bottom: 0.75rem;
 }
 
 .draft-layout h3 {
@@ -95,6 +127,18 @@
   display: flex;
   flex-direction: column;
   gap: 0.25rem;
+}
+
+.your-queue-tier ul,
+.available-players-list,
+.pick-log-list {
+  max-height: 420px;
+  overflow-y: auto;
+  padding-right: 0.25rem;
+}
+
+.pick-log-list {
+  max-height: 300px;
 }
 
 .your-roster-row,
